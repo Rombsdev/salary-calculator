@@ -1,0 +1,134 @@
+<script>
+import { mapActions, mapMutations, mapGetters } from "vuex";
+// props({
+//   msg: String,
+// });
+export default {
+  data() {
+    return {
+      id: "",
+      product: "",
+      order_cost: "",
+      expenses: "",
+      payment_method: "Карта",
+    };
+  },
+  computed: {
+    ...mapGetters(["get_salary"]),
+  },
+
+  methods: {
+    ...mapActions(["add_order"]),
+    set_order() {
+      const order_options = {
+        id: this.id,
+        product: this.product,
+        order_cost: this.order_cost,
+        payment_method: this.payment_method,
+        expenses: this.expenses,
+      };
+      this.$store.dispatch("add_order", order_options);
+    },
+
+    focus_input_order_id() {
+      this.$refs.input_order_id.focus();
+    },
+  },
+
+  mounted() {
+    this.focus_input_order_id();
+  },
+};
+
+/* 
+  № заказа
+  Название устройства
+  Затраты в заказе
+  Цена заказа
+  Согласование - bool
+  Учет другого мастера
+  Способ оплаты - object
+  Брал из кассы / переводом
+*/
+</script>
+
+<template>
+  <div class="max-w-3xl mx-auto mb-8">
+    <h1 class="mb-8">Расчет ЗП за продажи</h1>
+    <form action="" class="mb-8">
+      <div class="relative w-100 h-100 bg-red">
+        <div class="inner"></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div class="order-id relative">
+          <input
+            v-model.trim="id"
+            ref="input_order_id"
+            id="order-id"
+            class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            type="number"
+            placeholder=" "
+          />
+          <label
+            for="order-id"
+            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+            >Номер заказа*</label
+          >
+        </div>
+
+        <div class="cost-order relative">
+          <input
+            v-model.trim="order_cost"
+            id="cost-order"
+            class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            type="text"
+            placeholder=" "
+          />
+          <label
+            for="cost-order"
+            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+            >Цена заказа*</label
+          >
+        </div>
+        <div class="expenses relative">
+          <input
+            v-model.trim="expenses"
+            id="expenses"
+            class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            type="text"
+            placeholder=" "
+          />
+          <label
+            for="expenses"
+            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+            >Затраты в заказе*</label
+          >
+        </div>
+        <div>
+          <!-- <label for="pay-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Тип оплаты</label> -->
+          <select
+            v-model="payment_method"
+            id="pay-type"
+            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9px]"
+          >
+            <option value="Карта" selected>Карта (14,5%)</option>
+            <option value="Наличные">Наличные (10%)</option>
+            <option value="Безнал">Безнал (10%)</option>
+          </select>
+        </div>
+      </div>
+      <button
+        type="submit"
+        @click.prevent="set_order"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+      >
+        Добавить
+      </button>
+    </form>
+    <div class="salary font-bold">
+      Зарплата: {{ get_salary.toFixed(2) }} рублей
+    </div>
+  </div>
+</template>
+
+<style scoped></style>
