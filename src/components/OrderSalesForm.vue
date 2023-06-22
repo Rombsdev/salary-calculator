@@ -6,10 +6,10 @@ import { mapActions, mapMutations, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      id: "",
-      product: "",
-      order_cost: "",
-      expenses: "",
+      id: null,
+      product: null,
+      order_cost: null,
+      expenses: null,
       payment_method: "Карта",
     };
   },
@@ -26,8 +26,10 @@ export default {
         order_cost: this.order_cost,
         payment_method: this.payment_method,
         expenses: this.expenses,
+        order_type: 'sale'
       };
-      this.$store.dispatch("add_order", order_options);
+      this.add_order(order_options);
+      this.$refs.input_order_id.focus();
     },
 
     focus_input_order_id() {
@@ -54,7 +56,7 @@ export default {
 
 <template>
   <div class="max-w-3xl mx-auto mb-8">
-    <h1 class="mb-8">Расчет ЗП за продажи</h1>
+    <h1 class="mb-8"></h1>
     <form action="" class="mb-8">
       <div class="relative w-100 h-100 bg-red">
         <div class="inner"></div>
@@ -62,11 +64,11 @@ export default {
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div class="order-id relative">
           <input
-            v-model.trim="id"
+            v-model.trim.number="id"
             ref="input_order_id"
             id="order-id"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            type="number"
+            type="text"
             placeholder=" "
           />
           <label
@@ -78,7 +80,7 @@ export default {
 
         <div class="cost-order relative">
           <input
-            v-model.trim="order_cost"
+            v-model.trim.number="order_cost"
             id="cost-order"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
@@ -92,7 +94,7 @@ export default {
         </div>
         <div class="expenses relative">
           <input
-            v-model.trim="expenses"
+            v-model.trim.number="expenses"
             id="expenses"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
