@@ -4,7 +4,7 @@ const store = createStore({
   state() {
     return {
       orders_list: [],
-      payment_method: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10},
+      payment_methods: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10},
       agreement: 10,
       fix: 30,
       borrowing: [],
@@ -14,8 +14,9 @@ const store = createStore({
 
   getters: {
     get_orders: state => state.orders_list,
-    get_salary: state => state.orders_list.reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_method[payment_method]/100) - expenses) * 0.1 : acc + ((order_cost - order_cost*state.payment_method[payment_method]/100) - expenses) * 0.3, 0) + state.working_days * 1500,
-    get_working_days: state => state.working_days
+    get_salary: state => state.orders_list.reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * 0.1 : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * 0.3, 0) + state.working_days * 1500,
+    get_working_days: state => state.working_days,
+    get_payment_methods: state => state.payment_methods,
   },
 
   mutations: {

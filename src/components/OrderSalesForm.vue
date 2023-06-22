@@ -14,7 +14,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["get_salary"]),
+    ...mapGetters(["get_salary", "get_orders", "get_payment_methods"]),
+    get_local_salary(){
+      return this.get_orders.filter(order => order.order_type == 'sale')
+        .reduce( (acc, { order_cost, expenses, payment_method } ) => acc + (order_cost - order_cost * this.get_payment_methods[payment_method] / 100 - expenses) * 0.3, 0)
+    }
   },
 
   methods: {
@@ -70,6 +74,7 @@ export default {
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
             placeholder=" "
+            inputmode="numeric"
           />
           <label
             for="order-id"
@@ -85,6 +90,7 @@ export default {
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
             placeholder=" "
+            inputmode="numeric"
           />
           <label
             for="cost-order"
@@ -99,6 +105,7 @@ export default {
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
             placeholder=" "
+            inputmode="numeric"
           />
           <label
             for="expenses"
@@ -128,7 +135,8 @@ export default {
       </button>
     </form>
     <div class="salary font-bold">
-      Зарплата: {{ get_salary.toFixed(2) }} рублей
+      Зарплата: {{ get_salary.toFixed(2) }} рублей <br>
+      <!-- Зарплата за продажи: {{ get_local_salary.toFixed(2) }} рублей -->
     </div>
   </div>
 </template>

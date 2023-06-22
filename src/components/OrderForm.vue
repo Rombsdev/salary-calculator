@@ -1,8 +1,6 @@
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
-// props({
-//   msg: String,
-// });
+
 export default {
     data() {
         return {
@@ -33,8 +31,6 @@ export default {
                 order_type: "order",
             });
            this.$refs.input_order_id.focus();
-
-            
         },
     },  
     
@@ -86,8 +82,9 @@ export default {
                 v-model.trim.number="working_days"
                 id="working_days"
                 class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                type="number"
+                type="text"
                 placeholder=" "
+                inputmode="numeric"
             />
             <label
                 for="working_days"
@@ -106,8 +103,9 @@ export default {
                         ref="input_order_id"
                         id="order-id"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        type="number"
+                        type="text"
                         placeholder=" "
+                        inputmode="numeric"
                         required
                     />
                     <label
@@ -135,7 +133,8 @@ export default {
                         v-model.trim.number="order_cost"
                         id="cost-order"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        type="number"
+                        type="text"
+                        inputmode="numeric"
                         placeholder=" "
                         required
                     />
@@ -150,8 +149,9 @@ export default {
                         v-model.trim="expenses"
                         id="expenses"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        type="number"
+                        type="text"
                         placeholder=" "
+                        inputmode="numeric"
                         required
                     />
                     <label

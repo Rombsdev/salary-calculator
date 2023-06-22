@@ -26,8 +26,8 @@ export default {
 
 <template>
   <div class="max-w-3xl mx-auto mb-8">
-    <h1 class="mb-8"></h1>
-    <form action="" class="mb-8">
+    <h1 class="mb-8">В разработке</h1>
+    <!-- <form action="" class="mb-8">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div class="order-id relative">
           <input
@@ -35,8 +35,9 @@ export default {
             ref="input"
             id="amount"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            type="number"
+            type="text"
             placeholder=" "
+            inputmode="numeric"
           />
           <label
             for="amount"
@@ -53,7 +54,7 @@ export default {
       </button>
     </form>
     <div class="salary font-bold">
-    </div>
+    </div> -->
   </div>
 </template>
 
