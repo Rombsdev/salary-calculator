@@ -5,8 +5,8 @@ const store = createStore({
     return {
       orders_list: [],
       payment_methods: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10},
-      agreement: 10,
-      fix: 30,
+      agreement_rate: 0.1,
+      pay_rate: 0.3,
       borrowing: [],
       working_days: 0,
     };
@@ -14,9 +14,11 @@ const store = createStore({
 
   getters: {
     get_orders: state => state.orders_list,
-    get_salary: state => state.orders_list.reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * 0.1 : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * 0.3, 0) + state.working_days * 1500,
+    get_salary: state => state.orders_list.reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.agreement_rate : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.pay_rate, 0) + state.working_days * 1500,
     get_working_days: state => state.working_days,
     get_payment_methods: state => state.payment_methods,
+    get_salary_for_orders: state => state.orders_list.filter(order => order.order_type == 'order').reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.agreement_rate : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.pay_rate, 0),
+    get_salary_for_sales: state => state.orders_list.filter(order => order.order_type == 'sale').reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.agreement_rate : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.pay_rate, 0)
   },
 
   mutations: {
@@ -41,6 +43,10 @@ const store = createStore({
 
     set_working_days( state, days ){
       state.working_days = days;
+    },
+
+    initial_store( state, days ){
+      state.working_days = days;
     }
 
   },
@@ -60,8 +66,15 @@ const store = createStore({
 
     edit_order( { commit } ){
       commit('edit_order');
-    },   
-
+    },
+    
+    initial_store( { commit } ){
+      let days = JSON.parse( localStorage.getItem( "working_days_in_local_storage" ) );
+      
+      if( typeof days == 'number' && days > 0 ){
+        commit('initial_store', days)
+      }
+    }
   },
 
 });

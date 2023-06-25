@@ -1,7 +1,12 @@
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
+import InputWorkingDays from "@/components/WorkingDays.vue";
 
 export default {
+    components: {
+        InputWorkingDays,
+    },
+
     data() {
         return {
             id: null,
@@ -9,17 +14,16 @@ export default {
             order_cost: null,
             expenses: null,
             payment_method: "Карта",
+            payment_methods: { Карта: 14.5, Наличные: 10, Безнал: 10 },
             agreement: false,
-            working_days: 0,
         };
     },
     computed: {
-        ...mapGetters(["get_salary", "get_working_days"]),
+        ...mapGetters(["get_salary"]),
     },
 
     methods: {
         ...mapActions(["add_order"]),
-        ...mapMutations(["set_working_days"]),
         set_order() {
             this.$store.dispatch("add_order", {
                 id: this.id,
@@ -29,69 +33,35 @@ export default {
                 expenses: this.expenses,
                 agreement: this.agreement,
                 order_type: "order",
+                pay_per_order: (this.agreement
+                    ? (this.order_cost -
+                          (this.order_cost *
+                              this.payment_methods[this.payment_method]) /
+                              100 -
+                          this.expenses) *
+                      0.1
+                    : (this.order_cost -
+                          (this.order_cost *
+                              this.payment_methods[this.payment_method]) /
+                              100 -
+                          this.expenses) *
+                      0.3
+                ).toFixed(2),
             });
-           this.$refs.input_order_id.focus();
+            this.$refs.input_order_id.focus();
         },
-    },  
-    
-    created(){
-      let days = JSON.parse( localStorage.getItem( "working_days_in_local_storage" ) );
-
-      if( typeof days == 'number' && days > 0 ){
-        this.set_working_days(days);
-        this.working_days = this.get_working_days;
-      }
-
-      this.$watch('working_days', newValue  => {
-        let days = parseFloat( newValue );
-        if( days ){
-          this.set_working_days(days); localStorage.setItem('working_days_in_local_storage', days)
-        }else{
-          console.log(days)
-          localStorage.clear();
-          this.set_working_days(0)
-        }
-      })
-
     },
 
     mounted() {
-      this.$refs.input_order_id.focus();
+        this.$refs.input_order_id.focus();
     },
 };
-// const count = ref(0);
-// const salary = ref(0);
-// const order_list = [];
-/* 
-  № заказа
-  Название устройства
-  Затраты в заказе
-  Цена заказа
-  Согласование - bool
-  Учет другого мастера
-  Способ оплаты - object
-  Брал из кассы / переводом
-*/
 </script>
 
 <template>
     <div class="max-w-3xl mx-auto mb-8">
         <h1 class="mb-8 sm:mb-4 text-xl"></h1>
-        <div class="working_days relative mb-6">
-            <input
-                v-model.trim.number="working_days"
-                id="working_days"
-                class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                type="text"
-                placeholder=" "
-                inputmode="numeric"
-            />
-            <label
-                for="working_days"
-                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
-                >Рабочих дней x 1500 р.</label
-            >
-        </div>
+        <InputWorkingDays />
         <form @submit.prevent="set_order" action="" class="mb-8">
             <div class="relative w-100 h-100 bg-red">
                 <div class="inner"></div>

@@ -15,7 +15,7 @@ export default {
   },
 
   mounted() {
-      this.$refs.input.focus();
+      // this.$refs.input.focus();
     },
 };
 

@@ -10,7 +10,7 @@ const routes = [
     { path: "/orderSales", name: "orderSales", component: OrderSales },
     { path: "/orderForm", name: "orderForm", component: OrderForm },
     { path: "/fromCashbox", name: "fromCashbox", component: FromCashbox },
-    { path: "/:pathMatch(.*)*", name: "error404", component: OrderForm },
+    { path: "/:pathMatch(.*)*", name: "error404", component: Error404 },
 ];
 
 export default createRouter({
