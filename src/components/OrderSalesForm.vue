@@ -105,7 +105,7 @@ export default {
             <label
               for="cost-order-name"
               class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
-              >Наименование</label
+              >Товар</label
             >
           </div>
           <div class="cost-order relative mr-2">
@@ -177,12 +177,24 @@ export default {
             <img src="@/assets/gear_icon.svg" alt="" />
         </button>
     </div>
-    <div v-if="show_salary_details" class="border rounded-md p-3">
-      <div class="mb-2 font-medium">Смены: {{ (get_working_days * 1500).toFixed(2) }} руб.</div>
-      <div class="mb-2 font-medium">Заказы: {{ get_salary_for_orders.toFixed(2) }} руб.</div>
-      <div class="font-medium">Продажи: {{ get_salary_for_sales.toFixed(2) }} руб.</div>
-    </div>
+    <transition>
+      <div v-if="show_salary_details" class="border rounded-md p-3">
+        <div class="mb-2 font-medium">Смены: {{ (get_working_days * 1500).toFixed(2) }} руб.</div>
+        <div class="mb-2 font-medium">Заказы: {{ get_salary_for_orders.toFixed(2) }} руб.</div>
+        <div class="font-medium">Продажи: {{ get_salary_for_sales.toFixed(2) }} руб.</div>
+      </div>
+    </transition>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
