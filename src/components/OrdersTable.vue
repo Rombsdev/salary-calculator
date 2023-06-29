@@ -19,7 +19,7 @@ export default {
     computed: {
         ...mapGetters(["get_orders"]),
         is_active() {
-            return this.show_view_options ? "bg-gray-300" : "bg-white";
+            return this.show_view_options ? "h-[130px]" : "h-0";
         },
     },
     methods: {
@@ -68,22 +68,19 @@ export default {
 </script>
 
 <template>
-    <div class="flex items-center mb-4 max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-4 max-w-3xl mx-auto">
         <span class="text-xl font-bold mr-2">Таблица заказов</span>
-        <button
-            @click="show_view_options = !show_view_options"
-            type="button"
-            :class="is_active"
-            class="rounded-lg w-8 px-1 py-1 shadow-md border"
-        >
-            <img src="@/assets/gear_icon.svg" alt="" />
-        </button>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" class="sr-only peer" :class="is_active" @change="show_view_options = !show_view_options">
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-600"></div>
+            <img src="@/assets/gear_icon.svg" alt="" class="w-5 h-5 peer-checked:translate-x-full absolute top-0.5 left-[2px] bg-white rounded-full duration-200"/>
+        </label>
     </div>
     <div class="sm:rounded-lg max-w-3xl mx-auto">
-        <transition>
-            <div v-if="show_view_options" class="view_options mb-4">
+        <transition name="retest">
+        <div v-if="show_view_options" class="view_options">
                 <div
-                    class="test grid gap-y-3 gap-x-2 px-4 py-4 border border-gray-200 rounded-lg"
+                    class="test grid gap-y-3 gap-x-2 px-4 py-4 border border-gray-200 rounded-lg" :class="is_active"
                 >
                     <div class="">
                         <input
@@ -170,7 +167,7 @@ export default {
                         >
                     </div>
                 </div>
-            </div>
+        </div>
         </transition>
         <div class="relative overflow-x-auto">
             <table class="mx-auto w-full md:w-auto text-sm text-gray-500 text-center">
@@ -242,9 +239,9 @@ export default {
                         <td
                             v-if="view_options.device"
                             scope="row"
-                            class="px-3 py-4 md:px-6 font-medium text-gray-900"
+                            class="px-3 py-4 md:px-6 font-medium text-gray-900 text-left"
                         >
-                           <div class="truncate hover:select-none hover:whitespace-normal max-w-[150px] hover:max-w-[300px]">{{ order.device }}</div> 
+                           <div class="truncate hover:whitespace-normal max-w-[150px] hover:max-w-[300px]">{{ order.device }}</div> 
                         </td>
                         <td
                             v-if="view_options.order_cost"
@@ -362,5 +359,16 @@ input[type=checkbox]{
 .v-leave-to {
   opacity: 0;
 }
+.retest-enter-active,
+.retest-leave-active {
+    max-height: 130px;
+  transition: max-height .15s;
+  /* transition-delay: .15s; */
 
+}
+
+.retest-enter-from,
+.retest-leave-to {
+    max-height: 0;
+}
 </style>

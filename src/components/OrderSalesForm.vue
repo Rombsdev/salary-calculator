@@ -22,7 +22,7 @@ export default {
     },
 
     is_active() {
-      return this.show_salary_details ? "bg-gray-300" : "bg-white";
+      return this.show_salary_details ? "h-[130px]" : "h-[130px]";
     },
 
   },
@@ -168,17 +168,14 @@ export default {
     </div>
     <div class="flex items-center mb-4 max-w-3xl mx-auto">
         <span class="text-xl font-bold mr-2">Зарплата: {{ get_salary.toFixed(2) }} руб.</span>
-        <button
-            @click="show_salary_details = !show_salary_details"
-            type="button"
-            :class="is_active"
-            class="rounded-lg w-8 px-1 py-1 shadow-md border"
-        >
-            <img src="@/assets/gear_icon.svg" alt="" />
-        </button>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" class="sr-only peer" :class="is_active" @change="show_salary_details = !show_salary_details">
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-600"></div>
+            <img src="@/assets/gear_icon.svg" alt="" class="w-5 h-5 peer-checked:translate-x-full absolute top-0.5 left-[2px] bg-white rounded-full duration-200"/>
+        </label>
     </div>
     <transition>
-      <div v-if="show_salary_details" class="border rounded-md p-3">
+      <div v-if="show_salary_details" :class="is_active" class="border rounded-md p-3">
         <div class="mb-2 font-medium">Смены: {{ (get_working_days * 1500).toFixed(2) }} руб.</div>
         <div class="mb-2 font-medium">Заказы: {{ get_salary_for_orders.toFixed(2) }} руб.</div>
         <div class="font-medium">Продажи: {{ get_salary_for_sales.toFixed(2) }} руб.</div>
@@ -190,11 +187,13 @@ export default {
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 0.3s ease;
+  max-height: 130px;
+  transition: max-height .15s;
 }
 
 .v-enter-from,
 .v-leave-to {
-  opacity: 0;
+  max-height: 0;
+  
 }
 </style>

@@ -51,6 +51,9 @@ export default {
 
     mounted() {
         this.$refs.input_order_id.focus();
+
+        // let a = [{"id":49,"device":"Samsung Galaxy S21 Ultra (G998)","order_cost":1500,"payment_method":"Без чека","expenses":"0","agreement":false,"order_type":"order","pay_per_order":"450.00"},{"id":46,"device":"Стационарный ПК","order_cost":4000,"payment_method":"Карта","expenses":"0","agreement":false,"order_type":"order","pay_per_order":"1026.00"},{"id":40,"device":"Samsung Galaxy M31","order_cost":7990,"payment_method":"Карта","expenses":"4820","agreement":false,"order_type":"order","pay_per_order":"603.43"},{"id":35,"device":"Мини-пк GiGABYTE (GB-BACE310)","order_cost":1800,"payment_method":"Карта","expenses":"1","agreement":false,"order_type":"order","pay_per_order":"461.40"},{"id":51,"device":"Ноутбук Asus X75V (X75VB-TY008D)","order_cost":5500,"payment_method":"Карта","expenses":"635","agreement":false,"order_type":"order","pay_per_order":"1220.25"},{"id":53,"device":"Ноутбук Xiaomi Mi Notebook 15 (181501-AB)","order_cost":3490,"payment_method":"Наличные","expenses":"0","agreement":false,"order_type":"order","pay_per_order":"942.30"}]
+        // localStorage.setItem('orders_list_in_local_storage', JSON.stringify(a))
     },
 };
 </script>
