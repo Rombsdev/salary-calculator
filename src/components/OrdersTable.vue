@@ -173,9 +173,9 @@ export default {
             </div>
         </transition>
         <div class="relative overflow-x-auto">
-            <table class="mx-auto w-full md:w-auto text-sm text-gray-500">
+            <table class="mx-auto w-full md:w-auto text-sm text-gray-500 text-center">
                 <thead
-                    class="text-[10px] md:text-xs text-center text-gray-700 uppercase bg-gray-50"
+                    class="text-[10px] md:text-xs text-gray-700 uppercase bg-gray-50"
                 >
                     <tr>
                         <th scope="col" class="px-3 md:px-5 py-2 whitespace-nowrap">
@@ -235,49 +235,49 @@ export default {
                     >
                         <td
                             scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center"
+                            class="px-2 py-4 md:px-3  font-medium text-gray-900 whitespace-nowrap"
                         >
                             {{ order.id }}
                         </td>
                         <td
                             v-if="view_options.device"
                             scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center"
+                            class="px-3 py-4 md:px-6 font-medium text-gray-900"
                         >
-                            {{ order.device }}
+                           <div class="truncate hover:select-none hover:whitespace-normal max-w-[150px] hover:max-w-[300px]">{{ order.device }}</div> 
                         </td>
                         <td
                             v-if="view_options.order_cost"
-                            class="px-6 py-4 text-center"
+                            class="px-3 py-4 md:px-6"
                         >
                             {{ order.order_cost }}
                         </td>
                         <td
                             v-if="view_options.expenses"
-                            class="px-6 py-4 text-center"
+                            class="px-3 py-4 md:px-6"
                         >
                             {{ order.expenses }}
                         </td>
                         <td
                             v-if="view_options.agreement"
-                            class="px-6 py-4 text-center"
+                            class="px-3 py-4 md:px-6"
                         >
                             {{ order.agreement ? "Да" : "Нет" }}
                         </td>
                         <td
                             v-if="view_options.payment_method"
-                            class="px-6 py-4 text-center"
+                            class="px-3 py-4 md:px-6"
                         >
                             {{ order.payment_method }}
                         </td>
                         <td
                             v-if="view_options.salary"
-                            class="px-6 py-4 text-center"
+                            class="px-3 py-4 md:px-6"
                         >
                             {{ order.pay_per_order }}
                         </td>
     
-                        <td class="flex justify-center px-6 py-4 space-x-3">
+                        <td class="flex justify-center px-3 py-4 md:px-6 space-x-3">
                             <button
                                 type="button"
                                 class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -362,4 +362,5 @@ input[type=checkbox]{
 .v-leave-to {
   opacity: 0;
 }
+
 </style>

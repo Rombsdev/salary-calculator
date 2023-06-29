@@ -2,6 +2,13 @@
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import InputWorkingDays from "@/components/WorkingDays.vue";
 
+const payment_methods = [
+    {name: 'Карта', tax: 14.5},
+    {name: 'Наличные', tax: 10},
+    {name: 'Безнал', tax: 10},
+    {name: 'Без чека', tax: 0},
+]
+
 export default {
     components: {
         InputWorkingDays,
@@ -12,14 +19,17 @@ export default {
             id: null,
             device: null,
             order_cost: null,
-            expenses: null,
-            payment_method: "Карта",
-            payment_methods: { Карта: 14.5, Наличные: 10, Безнал: 10 },
+            expenses: 0,
+            payment_method: payment_methods[0].name,
+            payment_methods,
             agreement: false,
         };
     },
     computed: {
-        ...mapGetters(["get_salary"]),
+        ...mapGetters(["get_salary", 'get_rates']),
+        get_agreement(){
+            return this.agreement ? this.get_rates.agreement_rate : this.get_rates.pay_rate
+        }
     },
 
     methods: {
@@ -33,20 +43,7 @@ export default {
                 expenses: this.expenses,
                 agreement: this.agreement,
                 order_type: "order",
-                pay_per_order: (this.agreement
-                    ? (this.order_cost -
-                          (this.order_cost *
-                              this.payment_methods[this.payment_method]) /
-                              100 -
-                          this.expenses) *
-                      0.1
-                    : (this.order_cost -
-                          (this.order_cost *
-                              this.payment_methods[this.payment_method]) /
-                              100 -
-                          this.expenses) *
-                      0.3
-                ).toFixed(2),
+                pay_per_order: ((this.order_cost - (this.order_cost * this.payment_methods.find(method => method.name == this.payment_method).tax) / 100 - this.expenses) * this.get_agreement).toFixed(2),
             });
             this.$refs.input_order_id.focus();
         },
@@ -70,6 +67,7 @@ export default {
                 <div class="order-id relative">
                     <input
                         v-model.trim.number="id"
+                        @focus="$event.target.select()"
                         ref="input_order_id"
                         id="order-id"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -87,6 +85,7 @@ export default {
                 <div class="device relative">
                     <input
                         v-model.trim="device"
+                        @focus="$event.target.select()"
                         id="device"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         type="text"
@@ -101,6 +100,7 @@ export default {
                 <div class="cost-order relative">
                     <input
                         v-model.trim.number="order_cost"
+                        @focus="$event.target.select()"
                         id="cost-order"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         type="text"
@@ -117,6 +117,7 @@ export default {
                 <div class="expenses relative">
                     <input
                         v-model.trim="expenses"
+                        @focus="$event.target.select()"
                         id="expenses"
                         class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         type="text"
@@ -137,9 +138,7 @@ export default {
                         id="pay-type"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5"
                     >
-                        <option value="Карта" selected>Карта (14,5%)</option>
-                        <option value="Наличные">Наличные (10%)</option>
-                        <option value="Безнал">Безнал (10%)</option>
+                        <option v-for="method in payment_methods" :key="method.name" :value="method.name" selected>{{method.name}} ({{ method.tax }}%)</option>
                     </select>
                 </div>
 

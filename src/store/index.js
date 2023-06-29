@@ -4,7 +4,8 @@ const store = createStore({
   state() {
     return {
       orders_list: [],
-      payment_methods: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10},
+      payment_methods: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10, 'Без чека': 0},
+      rates: {pay_rate: 0.3, agreement_rate: 0.1},
       agreement_rate: 0.1,
       pay_rate: 0.3,
       borrowing: [],
@@ -18,7 +19,8 @@ const store = createStore({
     get_working_days: state => state.working_days,
     get_payment_methods: state => state.payment_methods,
     get_salary_for_orders: state => state.orders_list.filter(order => order.order_type == 'order').reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.agreement_rate : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.pay_rate, 0),
-    get_salary_for_sales: state => state.orders_list.filter(order => order.order_type == 'sale').reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.agreement_rate : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.pay_rate, 0)
+    get_salary_for_sales: state => state.orders_list.filter(order => order.order_type == 'sale').reduce((acc, {order_cost, expenses, agreement, payment_method}) => agreement ? acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.agreement_rate : acc + ((order_cost - order_cost*state.payment_methods[payment_method]/100) - expenses) * state.pay_rate, 0),
+    get_rates: state => state.rates,
   },
 
   mutations: {
