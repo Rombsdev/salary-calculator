@@ -1,30 +1,28 @@
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
 
+const payment_methods = [
+    {name: 'Карта', tax: 14.5},
+    {name: 'Наличные', tax: 10},
+    {name: 'Безнал', tax: 10},
+    {name: 'Без чека', tax: 0},
+    {name: 'Смешанная', tax: 'mix'},
+]
+
 export default {
   data() {
     return {
-      show_salary_details: false,
       id: null,
       product: null,
       order_cost: null,
       expenses: null,
-      payment_method: "Карта",
+      payment_method: payment_methods[0].name,
+      payment_methods,
       tovars_info: [{test:1}],
     };
   },
   computed: {
-    ...mapGetters(["get_salary", "get_orders", "get_payment_methods", 'get_salary_for_orders', 'get_salary_for_sales', 'get_working_days']),
-
-    get_local_salary(){
-      return this.get_orders.filter(order => order.order_type == 'sale')
-        .reduce( (acc, { order_cost, expenses, payment_method } ) => acc + (order_cost - order_cost * this.get_payment_methods[payment_method] / 100 - expenses) * 0.3, 0)
-    },
-
-    is_active() {
-      return this.show_salary_details ? "h-[130px]" : "h-[130px]";
-    },
-
+    ...mapGetters(["get_orders", "get_payment_methods"]),
   },
 
   methods: {
@@ -79,7 +77,7 @@ export default {
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div class="order-id relative">
           <input
-            v-model.trim.number="id"
+            v-model.lazy.trim.number="id"
             ref="input_order_id"
             id="order-id"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -96,7 +94,7 @@ export default {
         <div v-for="(tovar, i) in tovars_info" :key="i" class="flex items-center">
           <div class="cost-order relative mr-2">
             <input
-              v-model.trim="order_cost"
+              v-model.lazy.trim="order_cost"
               id="cost-order-name"
               class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               type="text"
@@ -110,7 +108,7 @@ export default {
           </div>
           <div class="cost-order relative mr-2">
             <input
-              v-model.trim.number="order_cost"
+              v-model.lazy.trim.number="order_cost"
               id="cost-order"
               class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               type="text"
@@ -127,7 +125,7 @@ export default {
         </div>
         <div class="expenses relative">
           <input
-            v-model.trim.number="expenses"
+            v-model.lazy.trim.number="expenses"
             id="expenses"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
@@ -147,9 +145,7 @@ export default {
             id="pay-type"
             class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9px]"
           >
-            <option value="Карта" selected>Карта (14,5%)</option>
-            <option value="Наличные">Наличные (10%)</option>
-            <option value="Безнал">Безнал (10%)</option>
+            <option v-for="method in payment_methods" :key="method.name" :value="method.name" selected>{{method.name}} ({{ method.tax }}%)</option>
           </select>
         </div>
       </div>
@@ -160,40 +156,10 @@ export default {
       >
         Добавить
       </button>
-    </form>
-    <div class="salary font-bold">
-      <span></span>
-      
-
-    </div>
-    <div class="flex items-center mb-4 max-w-3xl mx-auto">
-        <span class="text-xl font-bold mr-2">Зарплата: {{ get_salary.toFixed(2) }} руб.</span>
-        <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" class="sr-only peer" :class="is_active" @change="show_salary_details = !show_salary_details">
-            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-600"></div>
-            <img src="@/assets/gear_icon.svg" alt="" class="w-5 h-5 peer-checked:translate-x-full absolute top-0.5 left-[2px] bg-white rounded-full duration-200"/>
-        </label>
-    </div>
-    <transition>
-      <div v-if="show_salary_details" :class="is_active" class="border rounded-md p-3">
-        <div class="mb-2 font-medium">Смены: {{ (get_working_days * 1500).toFixed(2) }} руб.</div>
-        <div class="mb-2 font-medium">Заказы: {{ get_salary_for_orders.toFixed(2) }} руб.</div>
-        <div class="font-medium">Продажи: {{ get_salary_for_sales.toFixed(2) }} руб.</div>
-      </div>
-    </transition>
+    </form>    
   </div>
 </template>
 
 <style scoped>
-.v-enter-active,
-.v-leave-active {
-  max-height: 130px;
-  transition: max-height .15s;
-}
 
-.v-enter-from,
-.v-leave-to {
-  max-height: 0;
-  
-}
 </style>

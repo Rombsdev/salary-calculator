@@ -13,14 +13,12 @@ export default {
                 payment_method: true,
                 order_cost: true,
                 salary: true,
+                zo: 0.5
             },
         };
     },
     computed: {
         ...mapGetters(["get_orders"]),
-        is_active() {
-            return this.show_view_options ? "h-[130px]" : "h-0";
-        },
     },
     methods: {
         ...mapMutations(["clear_table"]),
@@ -71,106 +69,100 @@ export default {
     <div class="flex items-center justify-between mb-4 max-w-3xl mx-auto">
         <span class="text-xl font-bold mr-2">Таблица заказов</span>
         <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" class="sr-only peer" :class="is_active" @change="show_view_options = !show_view_options">
+            <input type="checkbox" value="" class="sr-only peer" @change="show_view_options = !show_view_options">
             <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-600"></div>
             <img src="@/assets/gear_icon.svg" alt="" class="w-5 h-5 peer-checked:translate-x-full absolute top-0.5 left-[2px] bg-white rounded-full duration-200"/>
         </label>
     </div>
     <div class="sm:rounded-lg max-w-3xl mx-auto">
-        <transition name="retest">
-        <div v-if="show_view_options" class="view_options">
-                <div
-                    class="test grid gap-y-3 gap-x-2 px-4 py-4 border border-gray-200 rounded-lg" :class="is_active"
-                >
-                    <div class="">
-                        <input
-                            v-model="view_options.device"
-                            id="view-device"
-                            type="checkbox"
-                            value="Да"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                        <label
-                            for="view-device"
-                            class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
-                            >Устройство</label
-                        >
+        <transition name="toggle">
+            <div v-show="show_view_options" class="view_options overflow-hidden max-h-[130px] mb-4">
+                    <div
+                        class="test grid gap-y-3 gap-x-2 px-4 py-4 border border-gray-200 rounded-lg" 
+                    >
+                        <div class="">
+                            <input
+                                v-model="view_options.device"
+                                id="view-device"
+                                type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="view-device"
+                                class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
+                                >Устройство</label
+                            >
+                        </div>
+                        <div class="">
+                            <input
+                                v-model="view_options.order_cost"
+                                id="order-cost"
+                                type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="order-cost"
+                                class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
+                                >Цена</label
+                            >
+                        </div>
+                        <div class="">
+                            <input
+                                v-model="view_options.expenses"
+                                id="view-expenses"
+                                type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="view-expenses"
+                                class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
+                                >Затраты</label
+                            >
+                        </div>
+                        <div class="">
+                            <input
+                                v-model="view_options.agreement"
+                                id="view-agreement"
+                                type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="view-agreement"
+                                class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
+                                >Согласование</label
+                            >
+                        </div>
+                        <div class="">
+                            <input
+                                v-model="view_options.payment_method"
+                                id="view-payment-method"
+                                type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="view-payment-method"
+                                class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
+                                >Оплата</label
+                            >
+                        </div>
+                        <div class="">
+                            <input
+                                v-model="view_options.salary"
+                                id="view-salary"
+                                type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="view-salary"
+                                class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
+                                >в ЗП</label
+                            >
+                        </div>
                     </div>
-                    <div class="">
-                        <input
-                            v-model="view_options.order_cost"
-                            id="order-cost"
-                            type="checkbox"
-                            value="Да"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                        <label
-                            for="order-cost"
-                            class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
-                            >Цена</label
-                        >
-                    </div>
-                    <div class="">
-                        <input
-                            v-model="view_options.expenses"
-                            id="view-expenses"
-                            type="checkbox"
-                            value="Да"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                        <label
-                            for="view-expenses"
-                            class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
-                            >Затраты</label
-                        >
-                    </div>
-                    <div class="">
-                        <input
-                            v-model="view_options.agreement"
-                            id="view-agreement"
-                            type="checkbox"
-                            value="Да"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                        <label
-                            for="view-agreement"
-                            class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
-                            >Согласование</label
-                        >
-                    </div>
-                    <div class="">
-                        <input
-                            v-model="view_options.payment_method"
-                            id="view-payment-method"
-                            type="checkbox"
-                            value="Да"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                        <label
-                            for="view-payment-method"
-                            class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
-                            >Оплата</label
-                        >
-                    </div>
-                    <div class="">
-                        <input
-                            v-model="view_options.salary"
-                            id="view-salary"
-                            type="checkbox"
-                            value="Да"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                        <label
-                            for="view-salary"
-                            class="w-full py-2.5 ml-2 text-sm font-medium text-gray-900"
-                            >в ЗП</label
-                        >
-                    </div>
-                </div>
-        </div>
+            </div>
         </transition>
-        <div class="relative overflow-x-auto">
-            <table class="mx-auto w-full md:w-auto text-sm text-gray-500 text-center">
+        <div class="table-wrapper relative overflow-x-auto">
+            <table class="order-tab mx-auto w-full md:w-auto text-sm text-gray-500 text-center">
                 <thead
                     class="text-[10px] md:text-xs text-gray-700 uppercase bg-gray-50"
                 >
@@ -316,7 +308,7 @@ export default {
                             </button>
                         </td>
                     </tr>
-                </transition-group>
+                    </transition-group>
                 </tbody>
             </table>
         </div>
@@ -359,16 +351,14 @@ input[type=checkbox]{
 .v-leave-to {
   opacity: 0;
 }
-.retest-enter-active,
-.retest-leave-active {
-    max-height: 130px;
-  transition: max-height .15s;
-  /* transition-delay: .15s; */
-
+.toggle-enter-active,
+.toggle-leave-active {
+    transition: max-height .3s ease, margin-bottom .2s ease;
 }
 
-.retest-enter-from,
-.retest-leave-to {
+.toggle-enter-from,
+.toggle-leave-to {
     max-height: 0;
+    margin-bottom: 0;
 }
 </style>
