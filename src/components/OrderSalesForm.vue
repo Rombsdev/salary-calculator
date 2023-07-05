@@ -9,6 +9,9 @@ const payment_methods = [
     {name: 'Смешанная', tax: 'mix'},
 ]
 
+const fix_services = new Map()
+fix_services.set('наклейка защитного стекла', 150)
+
 export default {
   data() {
     return {
@@ -18,31 +21,43 @@ export default {
       expenses: null,
       payment_method: payment_methods[0].name,
       payment_methods,
-      tovars_info: [{test:1}],
+      products: [{name: '', cost: 0, pay_per_product: 0}],
     };
   },
   computed: {
     ...mapGetters(["get_orders", "get_payment_methods"]),
+
+    pay_per_products(){
+      return this.products.reduce((acc, product) => {
+        let {name, cost} = product;
+        name = name.toLocaleLowerCase();
+        if(fix_services.has(name)) {product.pay_per_product = fix_services.get(name); return acc += fix_services.get(name)};
+        if(cost <= 0) { product.pay_per_product = 0; return 0};
+        if(cost < 500) { product.pay_per_product = 50; return acc += 50; };
+        if(cost >= 500){ product.pay_per_product = 100; return acc += 100; };
+      }, 0)
+    }
   },
 
   methods: {
-    ...mapActions(["add_order"]),
-    set_order() {
+    ...mapActions(["add_sale"]),
+    set_sale() {
       const order_options = {
         id: this.id,
-        product: this.product,
+        products: this.products,
         order_cost: this.order_cost,
         payment_method: this.payment_method,
         expenses: this.expenses,
         order_type: 'sale',
-        tovars_info: [...this.tovars_info]
+        pay_per_order: this.pay_per_products,
       };
-      this.add_order(order_options);
+      this.add_sale(order_options);
       this.$refs.input_order_id.focus();
     },
 
-    add_tovar(){
-      this.tovars_info.push({})
+    add_product(){
+      this.products.push({name: '', cost: 0, pay_per_product: 0})
+      console.log(this.products)
     },
 
     focus_input_order_id() {
@@ -70,7 +85,7 @@ export default {
 <template>
   <div class="max-w-3xl mx-auto mb-8">
     <h1 class="mb-8"></h1>
-    <form action="" class="mb-8">
+    <form @submit.prevent="set_sale" action="" class="mb-8">
       <div class="relative w-100 h-100 bg-red">
         <div class="inner"></div>
       </div>
@@ -78,6 +93,7 @@ export default {
         <div class="order-id relative">
           <input
             v-model.lazy.trim.number="id"
+            @focus="$event.target.select()"
             ref="input_order_id"
             id="order-id"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -91,41 +107,44 @@ export default {
             >Номер заказа*</label
           >
         </div>
-        <div v-for="(tovar, i) in tovars_info" :key="i" class="flex items-center">
+        <div v-for="(product, i) in products" :key="product.name" class="flex items-center">
           <div class="cost-order relative mr-2">
             <input
-              v-model.lazy.trim="order_cost"
-              id="cost-order-name"
+              v-model.lazy.trim="product.name"
+              @focus="$event.target.select()"
+              :id="`cost-order-name-${i+1}`"
               class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               type="text"
               placeholder=" "
             />
             <label
-              for="cost-order-name"
+              :for="`cost-order-name-${i+1}`"
               class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
               >Товар</label
             >
           </div>
           <div class="cost-order relative mr-2">
             <input
-              v-model.lazy.trim.number="order_cost"
-              id="cost-order"
+              v-model.lazy.trim.number="product.cost"
+              @focus="$event.target.select()"
+              :id="`cost-order-${i+1}`"
               class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               type="text"
               placeholder=" "
               inputmode="numeric"
             />
             <label
-              for="cost-order"
+              :for="`cost-order-${i+1}`"
               class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
               >Цена продажи*</label
             >
           </div>
-          <button @click="add_tovar" class="text-white bg-blue-700 hover:bg-blue-800 w-9 rounded-md p-1" type="button"><img src="@/assets/plus.svg" alt=""></button>
+          <button @click="add_product" class="text-white bg-blue-700 hover:bg-blue-800 w-9 rounded-md p-1" type="button"><img src="@/assets/plus.svg" alt=""></button>
         </div>
         <div class="expenses relative">
           <input
             v-model.lazy.trim.number="expenses"
+            @focus="$event.target.select()"
             id="expenses"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"
@@ -150,8 +169,6 @@ export default {
         </div>
       </div>
       <button
-        type="submit"
-        @click.prevent="set_order"
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
       >
         Добавить

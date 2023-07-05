@@ -3,6 +3,7 @@ const store = createStore({
   state() {
     return {
       orders_list: [],
+      sales_list: [],
       payment_methods: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10, 'Без чека': 0, 'Смешанная': 0},
       rates: {pay_rate: 0.3, agreement_rate: 0.1},
       borrowing: [],
@@ -16,12 +17,17 @@ const store = createStore({
     get_working_days: state => state.working_days,
     get_payment_methods: state => state.payment_methods,
     get_salary_per: state => filter => +(state.orders_list.filter(order => order.order_type == filter).reduce((acc, { pay_per_order }) => acc += pay_per_order, 0)).toFixed(2),
+    get_salary_per_sales: ({ sales_list }) => sales_list.reduce((acc, { pay_per_order }) => acc += pay_per_order, 0).toFixed(2),
     get_rates: state => state.rates,
   },
 
   mutations: {
     add_order(state, order) {
       state.orders_list.push(order);
+    },
+
+    add_sale(state, sale) {
+      state.sales_list.push(sale);
     },
 
     remove_order(state, id) {
@@ -55,6 +61,14 @@ const store = createStore({
         // alert( `Заказ №${ new_order.id } уже добавлен!` );
       } else{
         commit( 'add_order', new_order );
+      }
+    },
+
+    add_sale( { commit, state }, new_sale ){
+      if( state.sales_list.some( sale => sale.id == new_sale.id ) ){
+        // alert( `Заказ №${ new_order.id } уже добавлен!` );
+      } else{
+        commit( 'add_sale', new_sale );
       }
     },
 
