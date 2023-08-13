@@ -1,13 +1,5 @@
 <script>
-import { mapActions, mapMutations, mapGetters } from "vuex";
-
-const payment_methods = [
-    {name: 'Карта', tax: 14.5},
-    {name: 'Наличные', tax: 10},
-    {name: 'Безнал', tax: 10},
-    {name: 'Без чека', tax: 0},
-    {name: 'Смешанная', tax: 'mix'},
-]
+import { mapGetters } from "vuex";
 
 const fix_services = new Map()
 fix_services.set('наклейка защитного стекла', 150)
@@ -19,13 +11,13 @@ export default {
       product: null,
       order_cost: null,
       expenses: null,
-      payment_method: payment_methods[0].name,
-      payment_methods,
+      payment_method: 'карта',
+      payment_methods: null,
       products: [{name: '', cost: 0, pay_per_product: 0}],
     };
   },
   computed: {
-    ...mapGetters(["get_orders", "get_payment_methods"]),
+    ...mapGetters(["get_orders", "get_payment_methods", 'get_payment_methods_tax']),
 
     pay_per_products(){
       return this.products.reduce((acc, product) => {
@@ -40,8 +32,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["add_sale"]),
-    set_sale() {
+    add_sale() {
       const order_options = {
         id: this.id,
         products: this.products,
@@ -51,7 +42,7 @@ export default {
         order_type: 'sale',
         pay_per_order: this.pay_per_products,
       };
-      this.add_sale(order_options);
+      this.$store.dispatch('add_sale', order_options);
       this.$refs.input_order_id.focus();
     },
 
@@ -63,6 +54,10 @@ export default {
     focus_input_order_id() {
       this.$refs.input_order_id.focus();
     },
+  },
+
+  created(){
+    this.payment_methods = this.get_payment_methods;
   },
 
   mounted() {
@@ -85,7 +80,7 @@ export default {
 <template>
   <div class="max-w-3xl mx-auto mb-8">
     <h1 class="mb-8"></h1>
-    <form @submit.prevent="set_sale" action="" class="mb-8">
+    <form @submit.prevent="add_sale" action="" class="mb-8">
       <div class="relative w-100 h-100 bg-red">
         <div class="inner"></div>
       </div>

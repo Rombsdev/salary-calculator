@@ -1,11 +1,20 @@
 import { createStore } from "vuex";
+
+const payment_methods = {
+  'карта': {name: 'Карта', tax: 14.5},
+  'наличные': {name: 'Наличные', tax: 10},
+  'безнал': {name: 'Безнал', tax: 10},
+  'без чека': {name: 'Без чека', tax: 0},
+  'смешанная': {name: 'Смешанная', tax: 'mix'},
+}
+
 const store = createStore({  
   state() {
     return {
       orders_list: [],
       sales_list: [],
-      payment_methods: {'Карта': 14.5, 'Наличные': 10, 'Безнал': 10, 'Без чека': 0, 'Смешанная': 0},
-      rates: {pay_rate: 0.3, agreement_rate: 0.1},
+      payment_methods: payment_methods,
+      rates: {pay_rate: 0.3, agreement_rate: 0.1, day_rate: 1500},
       borrowing: [],
       working_days: 0,
     };
@@ -13,9 +22,10 @@ const store = createStore({
 
   getters: {
     get_orders: state => state.orders_list,
-    get_salary: state => +(state.orders_list.reduce((acc, { pay_per_order }) => acc += pay_per_order, 0) + state.working_days * 1500).toFixed(2),
+    get_salary: state => +(state.orders_list.reduce((acc, { pay_per_order }) => acc += pay_per_order, 0) + state.working_days * state.rates.day_rate).toFixed(2),
     get_working_days: state => state.working_days,
     get_payment_methods: state => state.payment_methods,
+    get_payment_methods_tax: state => payment_method => state.payment_methods[payment_method].tax,
     get_salary_per: state => filter => +(state.orders_list.filter(order => order.order_type == filter).reduce((acc, { pay_per_order }) => acc += pay_per_order, 0)).toFixed(2),
     get_salary_per_sales: ({ sales_list }) => sales_list.reduce((acc, { pay_per_order }) => acc += pay_per_order, 0).toFixed(2),
     get_rates: state => state.rates,

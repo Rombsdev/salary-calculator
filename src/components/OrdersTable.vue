@@ -161,7 +161,7 @@ export default {
                     </div>
             </div>
         </transition>
-        <div class="table-wrapper relative overflow-x-auto">
+        <div class="table-wrapper relative overflow-auto max-h-[500px]">
             <table class="order-tab mx-auto w-full md:w-auto text-sm text-gray-500 text-center">
                 <thead
                     class="text-[10px] md:text-xs text-gray-700 uppercase bg-gray-50"

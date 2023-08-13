@@ -61,6 +61,7 @@ export default {
         <input
             :value="working_days"
             @input="validate_days($event.target.value)"
+            @focus="$event.target.select()"
             id="working_days"
             class="block px-2.5 pb-2.5 pt-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             type="text"

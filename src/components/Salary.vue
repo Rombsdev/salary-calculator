@@ -11,7 +11,7 @@
         <transition name="toggle">
             <div v-show="show_salary_details" class="max-h-[120px] overflow-hidden">
                 <div class="border rounded-md p-3">
-                <div class="mb-2 font-medium">Смены: {{ get_working_days * 1500 }} руб.</div>
+                <div class="mb-2 font-medium">Смены: {{ get_working_days * get_rates.day_rate }} руб.</div>
                 <div class="mb-2 font-medium">Заказы: {{ get_salary_per('order') }} руб.</div>
                 <div class="font-medium">Продажи: {{ get_salary_per('sale') }} руб.</div>
                 </div>
@@ -31,7 +31,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["get_salary",'get_salary_per', 'get_working_days']),
+        ...mapGetters(["get_salary",'get_salary_per', 'get_working_days', 'get_rates']),
     }
 }
 </script>

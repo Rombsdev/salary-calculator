@@ -1,15 +1,7 @@
 <script>
-import { mapActions, mapMutations, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import InputWorkingDays from "@/components/WorkingDays.vue";
 import MixPayment from "@/components/MixPayment.vue";
-
-const payment_methods = [
-    {name: 'Карта', tax: 14.5},
-    {name: 'Наличные', tax: 10},
-    {name: 'Безнал', tax: 10},
-    {name: 'Без чека', tax: 0},
-    {name: 'Смешанная', tax: 'mix'},
-]
 
 export default {
     components: {
@@ -23,37 +15,37 @@ export default {
             device: null,
             order_cost: null,
             expenses: 0,
-            payment_method: payment_methods[0].name,
-            payment_methods,
-            agreement: false,
+            payment_method: 'карта',
+            payment_methods: null,
+            is_agreement: false,
             mix_pay: {cash: 0, card: 0,},
             toastShow: false,
         };
     },
     computed: {
-        ...mapGetters(['get_rates', 'get_payment_methods']),
-        get_agreement(){
-            const {agreement_rate, pay_rate} = this.get_rates; 
-            return this.agreement ? agreement_rate : pay_rate
+        ...mapGetters(['get_rates', 'get_payment_methods', 'get_payment_methods_tax']),
+
+        rate(){
+            const {agreement_rate, pay_rate} = this.get_rates;
+            return this.is_agreement ? agreement_rate : pay_rate
         },
 
         pay_per_order(){
-            return this.payment_method != 'Смешанная' 
-                ? +((this.order_cost - (this.order_cost * this.get_payment_methods[this.payment_method]) / 100 - this.expenses) * this.get_agreement).toFixed(2)
-                : +((( (this.mix_pay.cash - this.mix_pay.cash * 10 / 100) + (this.mix_pay.card - this.mix_pay.card * 14.5 / 100) ) - this.expenses ) * this.get_agreement).toFixed(2)
+            return this.payment_method != 'смешанная' 
+                ? +((this.order_cost - (this.order_cost * this.get_payment_methods_tax(this.payment_method)) / 100 - this.expenses) * this.rate).toFixed(2)
+                : +((( (this.mix_pay.cash - this.mix_pay.cash * 10 / 100) + (this.mix_pay.card - this.mix_pay.card * 14.5 / 100) ) - this.expenses ) * this.rate).toFixed(2)
         }
     },
 
     methods: {
-        ...mapActions(["add_order"]),
-        set_order() {
+        add_order() {
             this.$store.dispatch("add_order", {
                 id: this.id,
                 device: this.device,
                 order_cost: this.order_cost,
                 payment_method: this.payment_method,
                 expenses: this.expenses,
-                agreement: this.agreement,
+                agreement: this.is_agreement,
                 order_type: "order",
                 pay_per_order: this.pay_per_order,
             });
@@ -65,10 +57,14 @@ export default {
         },
     },
 
+    created(){
+        this.payment_methods = this.get_payment_methods;
+    },
+
     mounted() {
         this.$refs.input_order_id.focus();
 
-        // let a = [{"id":49,"device":"Samsung Galaxy S21 Ultra (G998)","order_cost":1500,"payment_method":"Без чека","expenses":0,"agreement":false,"order_type":"order","pay_per_order":450},{"id":46,"device":"Стационарный ПК","order_cost":4000,"payment_method":"Карта","expenses":0,"agreement":false,"order_type":"order","pay_per_order":1026},{"id":40,"device":"Samsung Galaxy M31","order_cost":7990,"payment_method":"Карта","expenses":4820,"agreement":false,"order_type":"order","pay_per_order":603.43},{"id":35,"device":"Мини-пк GiGABYTE (GB-BACE310)","order_cost":1800,"payment_method":"Карта","expenses":1,"agreement":false,"order_type":"order","pay_per_order":461.4},{"id":51,"device":"Ноутбук Asus X75V (X75VB-TY008D)","order_cost":5500,"payment_method":"Карта","expenses":635,"agreement":false,"order_type":"order","pay_per_order":1220.25},{"id":53,"device":"Ноутбук Xiaomi Mi Notebook 15 (181501-AB)","order_cost":3490,"payment_method":"Наличные","expenses":0,"agreement":false,"order_type":"order","pay_per_order":942.3}]
+        // let a = [{"id":215,"device":"Ноутбук Acer Aspire V3-772G","order_cost":4400,"payment_method":"без чека","expenses":0,"agreement":false,"order_type":"order","pay_per_order":1320},{"id":216,"device":"Ноутбук MSI Raider","order_cost":6790,"payment_method":"карта","expenses":0,"agreement":true,"order_type":"order","pay_per_order":580.54},{"id":219,"device":"iPhone XR","order_cost":6490,"payment_method":"без чека","expenses":1750,"agreement":true,"order_type":"order","pay_per_order":474},{"id":223,"device":"Ноутбук Sony Vaio VGN-NW2ERE","order_cost":2000,"payment_method":"карта","expenses":0,"agreement":false,"order_type":"order","pay_per_order":513}]
         // localStorage.setItem('orders_list_in_local_storage', JSON.stringify(a))
     },
 };
@@ -91,7 +87,7 @@ export default {
         </transition>
         <h1 class="mb-8 sm:mb-4 text-xl"></h1>
         <InputWorkingDays />
-        <form @submit.prevent="set_order" action="" class="mb-8">
+        <form @submit.prevent="add_order" action="" class="mb-8">
             <div class="relative w-100 h-100 bg-red">
                 <div class="inner"></div>
             </div>
@@ -170,10 +166,10 @@ export default {
                         id="pay-type"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5"
                     >
-                        <option v-for="method in payment_methods" :key="method.name" :value="method.name" selected>{{method.name}} ({{ method.tax }}%)</option>
+                        <option v-for="(method, key) in payment_methods" :key="key" :value="key">{{method.name}} ({{ method.tax }}%)</option>
                     </select>
                 </div>
-                <div v-if="payment_method == 'Смешанная'" class="payment-addition-options flex gap-3">
+                <div v-if="payment_method == 'смешанная'" class="payment-addition-options flex gap-3">
                     <div class="cash relative">
                         <input
                             v-model.lazy.trim.number="mix_pay.cash"
@@ -209,12 +205,11 @@ export default {
                         >
                     </div>
                 </div>
-                <mix-payment v-if="payment_method == 'Смешанная'" />
                 <div
                     class="agreement flex items-center pl-4 border border-gray-200 rounded-lg"
                 >
                     <input
-                        v-model="agreement"
+                        v-model="is_agreement"
                         id="agreement"
                         type="checkbox"
                         value="Да"
